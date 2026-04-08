@@ -1,0 +1,83 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="84" y1="48" x2="1126" y2="604" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1620"/>
+      <stop offset="0.56" stop-color="#111E28"/>
+      <stop offset="1" stop-color="#060C11"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(242 138) rotate(36.91) scale(300.418 194.992)">
+      <stop stop-color="#F4C06C" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#F4C06C" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(918 510) rotate(-152.553) scale(326.779 185.774)">
+      <stop stop-color="#70D7FF" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#70D7FF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="0" y="0" width="1200" height="630" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="20" stdDeviation="28" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="28" fill="url(#bg)"/>
+  <rect width="1200" height="630" rx="28" fill="url(#glowA)"/>
+  <rect width="1200" height="630" rx="28" fill="url(#glowB)"/>
+
+  <g opacity="0.16">
+    <path d="M0 70H1200M0 142H1200M0 214H1200M0 286H1200M0 358H1200M0 430H1200M0 502H1200M0 574H1200" stroke="#F4EFE8" stroke-width="1"/>
+    <path d="M86 0V630M158 0V630M230 0V630M302 0V630M374 0V630M446 0V630M518 0V630M590 0V630M662 0V630M734 0V630M806 0V630M878 0V630M950 0V630M1022 0V630M1094 0V630" stroke="#F4EFE8" stroke-width="1"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="58" y="58" width="312" height="514" rx="28" fill="#0E1821" fill-opacity="0.88" stroke="#A5C1D3" stroke-opacity="0.18"/>
+    <rect x="402" y="58" width="740" height="514" rx="28" fill="#0D1720" fill-opacity="0.92" stroke="#A5C1D3" stroke-opacity="0.18"/>
+  </g>
+
+  <text x="94" y="118" fill="#FFD79B" font-family="Avenir Next, Segoe UI, sans-serif" font-size="20" letter-spacing="5.2">TEACHING WEB APP</text>
+  <text x="94" y="188" fill="#F4EFE8" font-family="Iowan Old Style, Palatino Linotype, serif" font-size="56" font-weight="700">Crystal</text>
+  <text x="94" y="246" fill="#F4EFE8" font-family="Iowan Old Style, Palatino Linotype, serif" font-size="56" font-weight="700">Symmetry Explorer</text>
+  <text x="94" y="300" fill="#B8C5CF" font-family="Avenir Next, Segoe UI, sans-serif" font-size="24">All 32 crystallographic point groups</text>
+
+  <g>
+    <rect x="94" y="352" width="240" height="58" rx="18" fill="#1A2834" stroke="#A5C1D3" stroke-opacity="0.18"/>
+    <text x="122" y="389" fill="#F4EFE8" font-family="Iowan Old Style, Palatino Linotype, serif" font-size="28">4/mmm</text>
+    <text x="206" y="389" fill="#B8C5CF" font-family="Avenir Next, Segoe UI, sans-serif" font-size="22">Ditetragonal</text>
+  </g>
+  <g>
+    <rect x="94" y="426" width="240" height="58" rx="18" fill="#1A2834" stroke="#A5C1D3" stroke-opacity="0.18"/>
+    <text x="122" y="463" fill="#F4EFE8" font-family="Iowan Old Style, Palatino Linotype, serif" font-size="28">-3m</text>
+    <text x="198" y="463" fill="#B8C5CF" font-family="Avenir Next, Segoe UI, sans-serif" font-size="22">Ditrigonal</text>
+  </g>
+  <g>
+    <rect x="94" y="500" width="240" height="58" rx="18" fill="#1A2834" stroke="#A5C1D3" stroke-opacity="0.18"/>
+    <text x="122" y="537" fill="#F4EFE8" font-family="Iowan Old Style, Palatino Linotype, serif" font-size="28">m-3m</text>
+    <text x="214" y="537" fill="#B8C5CF" font-family="Avenir Next, Segoe UI, sans-serif" font-size="22">Cubic holohedral</text>
+  </g>
+
+  <text x="440" y="112" fill="#FFD79B" font-family="Avenir Next, Segoe UI, sans-serif" font-size="18" letter-spacing="4.8">INTERACTIVE 3D + STEREOGRAPHIC PROJECTION</text>
+  <text x="440" y="170" fill="#F4EFE8" font-family="Iowan Old Style, Palatino Linotype, serif" font-size="40" font-weight="700">Wireframes tuned to crystal class geometry</text>
+  <text x="440" y="214" fill="#B8C5CF" font-family="Avenir Next, Segoe UI, sans-serif" font-size="24">Inspect symmetry elements, compare systems, and explore representative forms.</text>
+
+  <g>
+    <rect x="440" y="266" width="270" height="250" rx="24" fill="#0A131A" stroke="#A5C1D3" stroke-opacity="0.18"/>
+    <circle cx="575" cy="391" r="92" stroke="#5E7282" stroke-width="2"/>
+    <circle cx="575" cy="391" r="58" stroke="#31404B" stroke-width="1.5" stroke-dasharray="7 9"/>
+    <path d="M483 391H667M575 299V483" stroke="#5E7282" stroke-width="1.5"/>
+    <path d="M514 330L636 452M636 330L514 452" stroke="#31404B" stroke-width="1.5"/>
+    <circle cx="575" cy="299" r="7" fill="#F4C06C"/>
+    <circle cx="653" cy="353" r="7" fill="#7FD6FF"/>
+    <circle cx="623" cy="442" r="7" fill="#FB7EA8"/>
+    <circle cx="527" cy="440" r="7" fill="#FFF28D"/>
+    <circle cx="497" cy="353" r="7" fill="#7FD6FF"/>
+    <text x="475" y="501" fill="#B8C5CF" font-family="Avenir Next, Segoe UI, sans-serif" font-size="22">Stereographic projection</text>
+  </g>
+
+  <g>
+    <rect x="734" y="266" width="366" height="250" rx="24" fill="#0A131A" stroke="#A5C1D3" stroke-opacity="0.18"/>
+    <path d="M920 306L1000 348L1000 432L920 474L840 432L840 348L920 306Z" stroke="#F4EFE8" stroke-width="3"/>
+    <path d="M920 266L1036 330L1036 450L920 514L804 450L804 330L920 266Z" stroke="#70D7FF" stroke-width="2" stroke-dasharray="10 8" opacity="0.72"/>
+    <path d="M920 226L1090 391L920 556L750 391L920 226Z" stroke="#F4C06C" stroke-width="2.5" opacity="0.85"/>
+    <path d="M804 330L920 391L1036 330M804 450L920 391L1036 450" stroke="#F4EFE8" stroke-width="2"/>
+    <circle cx="920" cy="391" r="10" fill="#FFF28D"/>
+    <text x="780" y="501" fill="#B8C5CF" font-family="Avenir Next, Segoe UI, sans-serif" font-size="22">Wireframe crystal with symmetry overlays</text>
+  </g>
+</svg>
