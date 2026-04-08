@@ -18,14 +18,29 @@ export type Vec3 = [number, number, number];
 export type WireframePreset =
   | "triclinic-cell"
   | "monoclinic-prism"
+  | "orthorhombic-disphenoid"
+  | "orthorhombic-pyramid"
   | "orthorhombic-prism"
   | "orthorhombic-dipyramid"
+  | "tetragonal-pyramid"
+  | "tetragonal-disphenoid"
   | "tetragonal-prism"
+  | "tetragonal-trapezohedron"
   | "tetragonal-dipyramid"
+  | "ditetragonal-pyramid"
+  | "ditetragonal-dipyramid"
+  | "trigonal-pyramid"
   | "trigonal-prism"
+  | "trigonal-trapezohedron"
+  | "ditrigonal-pyramid"
+  | "ditrigonal-dipyramid"
   | "trigonal-rhombohedron"
+  | "hexagonal-pyramid"
   | "hexagonal-prism"
+  | "hexagonal-trapezohedron"
   | "hexagonal-dipyramid"
+  | "dihexagonal-pyramid"
+  | "dihexagonal-dipyramid"
   | "cube"
   | "tetrahedron"
   | "octahedron"
@@ -191,7 +206,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Rhombic-disphenoidal",
     system: "orthorhombic",
     description: "Three mutually perpendicular twofold axes define the rotational symmetry.",
-    wireframePreset: "orthorhombic-prism",
+    wireframePreset: "orthorhombic-disphenoid",
     elements: [
       axis("c2-x", "2-fold axis a", 2, x, "Twofold axis parallel to a."),
       axis("c2-y", "2-fold axis b", 2, y, "Twofold axis parallel to b."),
@@ -204,7 +219,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Rhombic-pyramidal",
     system: "orthorhombic",
     description: "Two perpendicular mirror planes intersect in a twofold axis.",
-    wireframePreset: "orthorhombic-prism",
+    wireframePreset: "orthorhombic-pyramid",
     elements: [
       mirror("m-x", "Mirror plane yz", x, "Mirror plane parallel to b and c."),
       mirror("m-y", "Mirror plane xz", y, "Mirror plane parallel to a and c."),
@@ -234,7 +249,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Tetragonal-pyramidal",
     system: "tetragonal",
     description: "A single fourfold axis controls the tetragonal symmetry.",
-    wireframePreset: "tetragonal-prism",
+    wireframePreset: "tetragonal-pyramid",
     elements: [axis("c4-z", "4-fold axis", 4, z, "A fourfold rotation axis along c.")],
   },
   {
@@ -243,7 +258,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Tetragonal-disphenoidal",
     system: "tetragonal",
     description: "Its defining element is a fourfold rotoinversion axis.",
-    wireframePreset: "tetragonal-prism",
+    wireframePreset: "tetragonal-disphenoid",
     elements: [roto("s4-z", "4-fold rotoinversion axis", 4, z, "A fourfold rotoinversion axis along c.")],
   },
   {
@@ -252,7 +267,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Tetragonal-dipyramidal",
     system: "tetragonal",
     description: "A fourfold axis together with a horizontal mirror plane produces centrosymmetry.",
-    wireframePreset: "tetragonal-prism",
+    wireframePreset: "tetragonal-dipyramid",
     elements: [
       axis("c4-z", "4-fold axis", 4, z, "A fourfold rotation axis along c."),
       mirror("m-z", "Horizontal mirror plane", z, "Mirror plane perpendicular to the tetragonal axis."),
@@ -265,7 +280,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Tetragonal-trapezohedral",
     system: "tetragonal",
     description: "One fourfold axis is accompanied by four perpendicular twofold axes.",
-    wireframePreset: "tetragonal-dipyramid",
+    wireframePreset: "tetragonal-trapezohedron",
     elements: [
       axis("c4-z", "4-fold axis", 4, z, "Primary fourfold axis along c."),
       axis("c2-x", "2-fold axis a", 2, x, "Secondary twofold axis in the basal plane."),
@@ -277,10 +292,10 @@ export const pointGroups: CrystalClass[] = [
   {
     id: "4mm",
     hmSymbol: "4mm",
-    name: "Tetragonal-pyramidal",
+    name: "Ditetragonal-pyramidal",
     system: "tetragonal",
     description: "Four vertical mirror planes accompany the principal fourfold axis.",
-    wireframePreset: "tetragonal-dipyramid",
+    wireframePreset: "ditetragonal-pyramid",
     elements: [
       axis("c4-z", "4-fold axis", 4, z, "Primary fourfold axis along c."),
       mirror("m-x", "Vertical mirror plane yz", x, "Vertical mirror plane containing c."),
@@ -295,7 +310,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Tetragonal-scalenohedral",
     system: "tetragonal",
     description: "A fourfold rotoinversion axis is paired with twofold axes and diagonal mirror planes.",
-    wireframePreset: "tetragonal-dipyramid",
+    wireframePreset: "tetragonal-trapezohedron",
     elements: [
       roto("s4-z", "4-fold rotoinversion axis", 4, z, "Primary fourfold rotoinversion axis along c."),
       axis("c2-x", "2-fold axis a", 2, x, "Secondary twofold axis in the basal plane."),
@@ -310,7 +325,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Ditetragonal-dipyramidal",
     system: "tetragonal",
     description: "The holohedral tetragonal class combines the full rotational, mirror, and inversion content of the tetragonal system.",
-    wireframePreset: "tetragonal-dipyramid",
+    wireframePreset: "ditetragonal-dipyramid",
     elements: [
       axis("c4-z", "4-fold axis", 4, z, "Primary fourfold axis along c."),
       axis("c2-x", "2-fold axis a", 2, x, "Secondary twofold axis in the basal plane."),
@@ -331,7 +346,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Trigonal-pyramidal",
     system: "trigonal",
     description: "A single threefold axis defines the simplest trigonal class.",
-    wireframePreset: "trigonal-prism",
+    wireframePreset: "trigonal-pyramid",
     elements: [axis("c3-z", "3-fold axis", 3, z, "Primary threefold axis along c.")],
   },
   {
@@ -349,7 +364,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Trigonal-trapezohedral",
     system: "trigonal",
     description: "A threefold axis is paired with three perpendicular twofold axes in the basal plane.",
-    wireframePreset: "trigonal-prism",
+    wireframePreset: "trigonal-trapezohedron",
     elements: [
       axis("c3-z", "3-fold axis", 3, z, "Primary threefold axis along c."),
       axis("c2-a1", "2-fold axis a1", 2, a1, "Twofold axis in the basal plane."),
@@ -363,7 +378,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Ditrigonal-pyramidal",
     system: "trigonal",
     description: "A threefold axis accompanied by three vertical mirror planes.",
-    wireframePreset: "trigonal-prism",
+    wireframePreset: "ditrigonal-pyramid",
     elements: [
       axis("c3-z", "3-fold axis", 3, z, "Primary threefold axis along c."),
       mirror("m-a1", "Vertical mirror plane", a1, "Vertical mirror plane containing c."),
@@ -377,7 +392,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Ditrigonal-scalenohedral",
     system: "trigonal",
     description: "The holohedral trigonal class includes a threefold rotoinversion axis plus mirror content.",
-    wireframePreset: "trigonal-rhombohedron",
+    wireframePreset: "ditrigonal-dipyramid",
     elements: [
       roto("s3-z", "3-fold rotoinversion axis", 3, z, "Threefold rotoinversion axis along c."),
       axis("c2-a1", "2-fold axis a1", 2, a1, "Twofold axis in the basal plane."),
@@ -394,16 +409,16 @@ export const pointGroups: CrystalClass[] = [
     name: "Hexagonal-pyramidal",
     system: "hexagonal",
     description: "A single sixfold axis defines this hexagonal class.",
-    wireframePreset: "hexagonal-prism",
+    wireframePreset: "hexagonal-pyramid",
     elements: [axis("c6-z", "6-fold axis", 6, z, "Primary sixfold axis along c.")],
   },
   {
     id: "-6",
     hmSymbol: "-6",
-    name: "Hexagonal-scalenohedral",
+    name: "Trigonal-dipyramidal",
     system: "hexagonal",
     description: "Its defining element is a sixfold rotoinversion axis.",
-    wireframePreset: "hexagonal-prism",
+    wireframePreset: "ditrigonal-dipyramid",
     elements: [roto("s6-z", "6-fold rotoinversion axis", 6, z, "Sixfold rotoinversion axis along c.")],
   },
   {
@@ -412,7 +427,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Hexagonal-dipyramidal",
     system: "hexagonal",
     description: "A sixfold axis and a horizontal mirror plane make the class centrosymmetric.",
-    wireframePreset: "hexagonal-prism",
+    wireframePreset: "hexagonal-dipyramid",
     elements: [
       axis("c6-z", "6-fold axis", 6, z, "Primary sixfold axis along c."),
       mirror("m-z", "Horizontal mirror plane", z, "Mirror plane perpendicular to c."),
@@ -425,7 +440,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Hexagonal-trapezohedral",
     system: "hexagonal",
     description: "A sixfold axis is paired with six twofold axes in the basal plane.",
-    wireframePreset: "hexagonal-dipyramid",
+    wireframePreset: "hexagonal-trapezohedron",
     elements: [
       axis("c6-z", "6-fold axis", 6, z, "Primary sixfold axis along c."),
       axis("c2-a1", "2-fold axis a1", 2, a1, "Twofold axis in the basal plane."),
@@ -439,10 +454,10 @@ export const pointGroups: CrystalClass[] = [
   {
     id: "6mm",
     hmSymbol: "6mm",
-    name: "Hexagonal-pyramidal",
+    name: "Dihexagonal-pyramidal",
     system: "hexagonal",
     description: "Six vertical mirror planes accompany the principal sixfold axis.",
-    wireframePreset: "hexagonal-dipyramid",
+    wireframePreset: "dihexagonal-pyramid",
     elements: [
       axis("c6-z", "6-fold axis", 6, z, "Primary sixfold axis along c."),
       mirror("m-a1", "Vertical mirror plane", a1, "Vertical mirror plane containing c."),
@@ -456,10 +471,10 @@ export const pointGroups: CrystalClass[] = [
   {
     id: "-6m2",
     hmSymbol: "-6m2",
-    name: "Hexagonal-dipyramidal",
+    name: "Ditrigonal-dipyramidal",
     system: "hexagonal",
     description: "A sixfold rotoinversion axis is paired with mirror planes and basal twofold axes.",
-    wireframePreset: "hexagonal-dipyramid",
+    wireframePreset: "ditrigonal-dipyramid",
     elements: [
       roto("s6-z", "6-fold rotoinversion axis", 6, z, "Sixfold rotoinversion axis along c."),
       axis("c2-a1", "2-fold axis a1", 2, a1, "Twofold axis in the basal plane."),
@@ -476,7 +491,7 @@ export const pointGroups: CrystalClass[] = [
     name: "Dihexagonal-dipyramidal",
     system: "hexagonal",
     description: "The holohedral hexagonal class with the full set of sixfold, twofold, mirror, and inversion symmetry.",
-    wireframePreset: "hexagonal-dipyramid",
+    wireframePreset: "dihexagonal-dipyramid",
     elements: [
       axis("c6-z", "6-fold axis", 6, z, "Primary sixfold axis along c."),
       axis("c2-a1", "2-fold axis a1", 2, a1, "Twofold axis in the basal plane."),
@@ -536,7 +551,7 @@ export const pointGroups: CrystalClass[] = [
   {
     id: "432",
     hmSymbol: "432",
-    name: "Hexoctahedral",
+    name: "Gyroidal",
     system: "cubic",
     description: "Contains fourfold axes through cube faces, threefold axes through body diagonals, and twofold axes through edge centers.",
     wireframePreset: "octahedron",
@@ -559,7 +574,7 @@ export const pointGroups: CrystalClass[] = [
   {
     id: "-43m",
     hmSymbol: "-43m",
-    name: "Tetrahedral",
+    name: "Hextetrahedral",
     system: "cubic",
     description: "Three fourfold rotoinversion axes coexist with four threefold axes and diagonal mirror planes.",
     wireframePreset: "tetrahedron",

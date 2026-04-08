@@ -47,6 +47,23 @@ const wireframeMaterial = new LineBasicMaterial({
 const baseSegments = (points: number[][], edges: Array<[number, number]>) =>
   edges.map(([start, end]) => [...points[start], ...points[end]]);
 
+const edgesFromFaces = (faces: number[][]): Array<[number, number]> => {
+  const seen = new Set<string>();
+  const edges: Array<[number, number]> = [];
+  faces.forEach((face) => {
+    for (let index = 0; index < face.length; index += 1) {
+      const start = face[index];
+      const end = face[(index + 1) % face.length];
+      const edge = start < end ? `${start}:${end}` : `${end}:${start}`;
+      if (!seen.has(edge)) {
+        seen.add(edge);
+        edges.push(start < end ? [start, end] : [end, start]);
+      }
+    }
+  });
+  return edges;
+};
+
 interface CrystalShapeData {
   points: number[][];
   edges: Array<[number, number]>;
@@ -94,6 +111,90 @@ const prismFaces = (sides: number) => {
     return [index, next, next + sides, index + sides];
   });
   return [top, bottom, ...sidesFaces];
+};
+
+const polygonRing = (sides: number, radius: number, z: number, rotation = 0) =>
+  Array.from({ length: sides }, (_, index) => {
+    const angle = rotation + (index / sides) * Math.PI * 2;
+    return [Math.cos(angle) * radius, Math.sin(angle) * radius, z];
+  });
+
+const alternatingRing = (
+  sides: number,
+  outerRadius: number,
+  innerRadius: number,
+  z: number,
+  rotation = 0,
+) =>
+  Array.from({ length: sides }, (_, index) => {
+    const angle = rotation + (index / sides) * Math.PI * 2;
+    const radius = index % 2 === 0 ? outerRadius : innerRadius;
+    return [Math.cos(angle) * radius, Math.sin(angle) * radius, z];
+  });
+
+const createPyramidData = (ring: number[][], apex: number[]) => {
+  const apexIndex = ring.length;
+  const points = [...ring, apex];
+  const faces = [Array.from({ length: ring.length }, (_, index) => index)];
+  for (let index = 0; index < ring.length; index += 1) {
+    const next = (index + 1) % ring.length;
+    faces.push([index, next, apexIndex]);
+  }
+  return { points, faces, edges: edgesFromFaces(faces) };
+};
+
+const createBipyramidData = (ring: number[][], top: number[], bottom: number[]) => {
+  const topIndex = ring.length;
+  const bottomIndex = ring.length + 1;
+  const points = [...ring, top, bottom];
+  const faces = bipyramidFaces(ring.length, topIndex, bottomIndex);
+  return { points, faces, edges: edgesFromFaces(faces) };
+};
+
+const createDisphenoidData = (xRadius: number, yRadius: number, height: number) => {
+  const points = [
+    [xRadius, 0, height],
+    [-xRadius, 0, height],
+    [0, yRadius, -height],
+    [0, -yRadius, -height],
+  ];
+  const faces = [
+    [0, 2, 1],
+    [0, 1, 3],
+    [0, 3, 2],
+    [1, 2, 3],
+  ];
+  return { points, faces, edges: edgesFromFaces(faces) };
+};
+
+const createTrapezohedronData = (
+  sides: number,
+  upperRadius: number,
+  lowerRadius: number,
+  upperZ: number,
+  lowerZ: number,
+  topZ: number,
+  bottomZ: number,
+) => {
+  const upperRing = polygonRing(sides, upperRadius, upperZ);
+  const lowerRing = polygonRing(sides, lowerRadius, lowerZ, Math.PI / sides);
+  const topIndex = 0;
+  const bottomIndex = 1;
+  const upperStart = 2;
+  const lowerStart = upperStart + sides;
+  const points = [[0, 0, topZ], [0, 0, bottomZ], ...upperRing, ...lowerRing];
+  const faces: number[][] = [];
+  for (let index = 0; index < sides; index += 1) {
+    const next = (index + 1) % sides;
+    const prev = (index - 1 + sides) % sides;
+    const upper = upperStart + index;
+    const upperNext = upperStart + next;
+    const lower = lowerStart + index;
+    const lowerPrev = lowerStart + prev;
+    faces.push([topIndex, upper, lower, upperNext]);
+    faces.push([bottomIndex, lower, upper, lowerPrev]);
+  }
+  return { points, faces, edges: edgesFromFaces(faces) };
 };
 
 const bipyramidFaces = (ringSize: number, topIndex: number, bottomIndex: number) => [
@@ -249,6 +350,18 @@ const createShapeData = (preset: WireframePreset): CrystalShapeData => {
       ];
       return { points, edges, faces: bipyramidFaces(4, 4, 5) };
     }
+    case "orthorhombic-disphenoid":
+      return createDisphenoidData(1.45, 0.95, 1.05);
+    case "orthorhombic-pyramid":
+      return createPyramidData(
+        [
+          [-1.3, -0.85, -1.05],
+          [1.3, -0.85, -1.05],
+          [1.3, 0.85, -1.05],
+          [-1.3, 0.85, -1.05],
+        ],
+        [0, 0, 1.45],
+      );
     case "tetragonal-prism": {
       const points = [
         [-1, -1, -1.3],
@@ -312,6 +425,16 @@ const createShapeData = (preset: WireframePreset): CrystalShapeData => {
       ];
       return { points, edges, faces: bipyramidFaces(4, 4, 5) };
     }
+    case "tetragonal-pyramid":
+      return createPyramidData(polygonRing(4, 1.25, -1.15, Math.PI / 4), [0, 0, 1.45]);
+    case "tetragonal-disphenoid":
+      return createDisphenoidData(1.15, 1.15, 1.15);
+    case "tetragonal-trapezohedron":
+      return createTrapezohedronData(4, 1.2, 0.85, 0.45, -0.45, 1.75, -1.75);
+    case "ditetragonal-pyramid":
+      return createPyramidData(alternatingRing(8, 1.35, 0.88, -1.15, Math.PI / 8), [0, 0, 1.45]);
+    case "ditetragonal-dipyramid":
+      return createBipyramidData(alternatingRing(8, 1.3, 0.9, 0, Math.PI / 8), [0, 0, 1.75], [0, 0, -1.75]);
     case "trigonal-prism": {
       const points = [
         [1.2, 0, 1.2],
@@ -366,6 +489,8 @@ const createShapeData = (preset: WireframePreset): CrystalShapeData => {
         ],
       };
     }
+    case "trigonal-pyramid":
+      return createPyramidData(polygonRing(3, 1.3, -1.1, Math.PI / 2), [0, 0, 1.45]);
     case "hexagonal-prism": {
       const points = prismPoints(6, 1.1, 1.25);
       return { points, edges: prismEdges(6), faces: prismFaces(6) };
@@ -399,6 +524,20 @@ const createShapeData = (preset: WireframePreset): CrystalShapeData => {
       ];
       return { points, edges, faces: bipyramidFaces(6, 6, 7) };
     }
+    case "trigonal-trapezohedron":
+      return createTrapezohedronData(3, 1.15, 0.8, 0.4, -0.4, 1.6, -1.6);
+    case "ditrigonal-pyramid":
+      return createPyramidData(alternatingRing(6, 1.35, 0.85, -1.15, Math.PI / 6), [0, 0, 1.5]);
+    case "ditrigonal-dipyramid":
+      return createBipyramidData(alternatingRing(6, 1.25, 0.82, 0, Math.PI / 6), [0, 0, 1.72], [0, 0, -1.72]);
+    case "hexagonal-pyramid":
+      return createPyramidData(polygonRing(6, 1.2, -1.15, Math.PI / 6), [0, 0, 1.45]);
+    case "hexagonal-trapezohedron":
+      return createTrapezohedronData(6, 1.2, 0.92, 0.42, -0.42, 1.8, -1.8);
+    case "dihexagonal-pyramid":
+      return createPyramidData(alternatingRing(12, 1.28, 0.98, -1.18, Math.PI / 12), [0, 0, 1.5]);
+    case "dihexagonal-dipyramid":
+      return createBipyramidData(alternatingRing(12, 1.24, 0.96, 0, Math.PI / 12), [0, 0, 1.82], [0, 0, -1.82]);
     case "cube": {
       const points = [
         [-1, -1, -1],
