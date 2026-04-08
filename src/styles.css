@@ -1,0 +1,353 @@
+:root {
+  color-scheme: dark;
+  --bg: #081016;
+  --bg-soft: #101b24;
+  --panel: rgba(15, 24, 33, 0.92);
+  --panel-strong: rgba(21, 31, 42, 0.98);
+  --line: rgba(165, 193, 211, 0.18);
+  --line-strong: rgba(165, 193, 211, 0.36);
+  --text: #f4efe8;
+  --muted: #b8c5cf;
+  --accent: #f4c06c;
+  --accent-strong: #ffd79b;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Garamond, serif;
+  --sans: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(242, 179, 89, 0.18), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(73, 167, 199, 0.14), transparent 32%),
+    linear-gradient(145deg, #071016 0%, #0e1720 45%, #050b10 100%);
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 90%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+#app {
+  height: 100vh;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(290px, 360px) 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  padding: 2rem 1.25rem 1.5rem;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(11, 17, 24, 0.92), rgba(7, 12, 18, 0.82));
+  backdrop-filter: blur(20px);
+  overflow-y: auto;
+}
+
+.brand,
+.viewer-card,
+.control-card,
+.system-section {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  padding: 1.4rem;
+  background: linear-gradient(160deg, rgba(244, 192, 108, 0.16), rgba(18, 28, 38, 0.9));
+}
+
+.brand h1,
+.viewer-card h3 {
+  margin: 0;
+  font-family: var(--serif);
+  letter-spacing: 0.01em;
+}
+
+.brand h1 {
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  line-height: 0.95;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: var(--accent-strong);
+}
+
+.intro,
+.subtitle,
+.description,
+.toggle-row small,
+.empty-state {
+  color: var(--muted);
+}
+
+.system-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.system-section {
+  padding: 1rem;
+  background: rgba(14, 22, 31, 0.74);
+}
+
+.system-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.85rem;
+}
+
+.system-header h2 {
+  margin: 0;
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+.system-header span {
+  color: var(--accent-strong);
+  font-size: 0.88rem;
+}
+
+.class-buttons {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.class-button {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+.class-button:hover,
+.class-button:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.class-button.active {
+  border-color: rgba(244, 192, 108, 0.7);
+  background: linear-gradient(135deg, rgba(244, 192, 108, 0.15), rgba(255, 255, 255, 0.04));
+}
+
+.symbol {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+}
+
+.meta {
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.main-panel {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.2rem;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.subtitle {
+  margin: 0.2rem 0 0.35rem;
+  text-transform: capitalize;
+}
+
+.description,
+.intro {
+  line-height: 1.45;
+}
+
+.viewer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.85fr);
+  gap: 1.2rem;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.viewer-card,
+.control-card {
+  background: linear-gradient(180deg, rgba(12, 20, 29, 0.92), rgba(14, 21, 30, 0.82));
+}
+
+.viewer-card {
+  padding: 1rem;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.viewer-header {
+  margin-bottom: 0.8rem;
+}
+
+.viewer-description {
+  margin: 0;
+  max-width: 62ch;
+}
+
+.viewer-frame {
+  margin-top: 0.8rem;
+  min-height: 0;
+  height: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(113, 217, 255, 0.08), transparent 30%),
+    radial-gradient(circle at 80% 80%, rgba(244, 192, 108, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(6, 12, 16, 0.88), rgba(10, 18, 24, 0.98));
+  overflow: hidden;
+}
+
+.viewer-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.control-card {
+  padding: 1rem;
+  display: grid;
+  gap: 1.1rem;
+  align-content: start;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.control-block {
+  padding: 0.4rem 0;
+}
+
+.toggle-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.toggle-row {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 0.8rem;
+  align-items: start;
+  padding: 0.8rem 0.9rem;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.toggle-row strong,
+.viewer-card h3,
+.hero-note h3 {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.toggle-row input {
+  margin-top: 0.25rem;
+  accent-color: var(--accent);
+}
+
+.empty-state {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px dashed var(--line-strong);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+@media (max-width: 1100px) {
+  .shell,
+  .viewer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #app,
+  .shell {
+    height: auto;
+    overflow: visible;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    overflow: visible;
+  }
+
+  .viewer-frame {
+    min-height: 460px;
+    height: auto;
+  }
+
+  .main-panel,
+  .control-card {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 720px) {
+  .sidebar,
+  .main-panel {
+    padding: 1rem;
+  }
+
+  .brand,
+  .viewer-card,
+  .control-card,
+  .system-section {
+    border-radius: 18px;
+  }
+
+  .viewer-frame {
+    min-height: 380px;
+  }
+}
