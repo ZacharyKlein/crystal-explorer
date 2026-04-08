@@ -274,6 +274,21 @@ input {
   gap: 0.7rem;
 }
 
+.stereogram-panel {
+  padding: 0.8rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at top, rgba(127, 214, 255, 0.08), transparent 38%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.stereogram-panel svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .toggle-row,
 .slider-row {
   display: grid;

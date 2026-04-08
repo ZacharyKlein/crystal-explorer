@@ -1,5 +1,6 @@
 import "./styles.css";
 import { groupedPointGroups, pointGroups, type CrystalClass, type SymmetryElementType } from "./data";
+import { renderStereogram } from "./stereogram";
 import { CrystalViewer } from "./viewer";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -71,6 +72,10 @@ app.innerHTML = `
         </div>
         <div class="control-card">
           <div class="control-block">
+            <p class="eyebrow">Stereographic Projection</p>
+            <div id="stereogram-panel" class="stereogram-panel"></div>
+          </div>
+          <div class="control-block">
             <p class="eyebrow">Crystal Skin</p>
             <label class="toggle-row">
               <input type="checkbox" id="skin-toggle" ${state.skinEnabled ? "checked" : ""} />
@@ -121,6 +126,7 @@ const elementToggles = document.querySelector<HTMLDivElement>("#element-toggles"
 const skinToggle = document.querySelector<HTMLInputElement>("#skin-toggle");
 const skinOpacity = document.querySelector<HTMLInputElement>("#skin-opacity");
 const skinOpacityValue = document.querySelector<HTMLOutputElement>("#skin-opacity-value");
+const stereogramPanel = document.querySelector<HTMLDivElement>("#stereogram-panel");
 
 if (
   !systemList ||
@@ -132,7 +138,8 @@ if (
   !elementToggles ||
   !skinToggle ||
   !skinOpacity ||
-  !skinOpacityValue
+  !skinOpacityValue ||
+  !stereogramPanel
 ) {
   throw new Error("App layout failed to render");
 }
@@ -198,6 +205,7 @@ const renderSelectedClass = () => {
   classTitle.textContent = `${crystalClass.hmSymbol} · ${crystalClass.name}`;
   classSubtitle.textContent = `${crystalClass.system} crystal system`;
   classDescription.textContent = crystalClass.description;
+  stereogramPanel.innerHTML = renderStereogram(crystalClass);
 
   if (crystalClass.elements.length === 0) {
     elementToggles.innerHTML = `<p class="empty-state">This class only has the identity operation, so there are no extra symmetry elements to highlight.</p>`;
