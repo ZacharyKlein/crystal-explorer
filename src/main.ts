@@ -77,30 +77,30 @@ app.innerHTML = `
           </div>
           <div class="control-block">
             <p class="eyebrow">Crystal Skin</p>
-            <label class="toggle-row">
-              <input type="checkbox" id="skin-toggle" ${state.skinEnabled ? "checked" : ""} />
-              <span>
-                <strong>Show solid skin layer</strong>
-                <small>Add a translucent surface over the wireframe crystal.</small>
-              </span>
-            </label>
-            <label class="slider-row" for="skin-opacity">
-              <span>
-                <strong>Skin opacity</strong>
-                <small>Adjust the surface opacity from 0% to 100%.</small>
-              </span>
-              <div class="slider-inputs">
-                <input
-                  id="skin-opacity"
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value="${state.skinOpacityPercent}"
-                />
-                <output id="skin-opacity-value">${state.skinOpacityPercent}%</output>
-              </div>
-            </label>
+            <div id="skin-control" class="skin-control">
+              <label class="toggle-row skin-toggle-row">
+                <input type="checkbox" id="skin-toggle" ${state.skinEnabled ? "checked" : ""} />
+                <span>
+                  <strong>Show solid surface</strong>
+                </span>
+              </label>
+              <label class="slider-row skin-slider-row" for="skin-opacity">
+                <span>
+                  <strong>Surface opacity</strong>
+                </span>
+                <div class="slider-inputs">
+                  <input
+                    id="skin-opacity"
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="${state.skinOpacityPercent}"
+                  />
+                  <output id="skin-opacity-value">${state.skinOpacityPercent}%</output>
+                </div>
+              </label>
+            </div>
           </div>
           <div class="control-block">
             <p class="eyebrow">Element Types</p>
@@ -123,6 +123,7 @@ const classSubtitle = document.querySelector<HTMLParagraphElement>("#class-subti
 const classDescription = document.querySelector<HTMLParagraphElement>("#class-description");
 const typeToggles = document.querySelector<HTMLDivElement>("#type-toggles");
 const elementToggles = document.querySelector<HTMLDivElement>("#element-toggles");
+const skinControl = document.querySelector<HTMLDivElement>("#skin-control");
 const skinToggle = document.querySelector<HTMLInputElement>("#skin-toggle");
 const skinOpacity = document.querySelector<HTMLInputElement>("#skin-opacity");
 const skinOpacityValue = document.querySelector<HTMLOutputElement>("#skin-opacity-value");
@@ -136,6 +137,7 @@ if (
   !classDescription ||
   !typeToggles ||
   !elementToggles ||
+  !skinControl ||
   !skinToggle ||
   !skinOpacity ||
   !skinOpacityValue ||
@@ -233,6 +235,7 @@ const renderSelectedClass = () => {
   skinOpacity.value = String(state.skinOpacityPercent);
   skinOpacityValue.value = `${state.skinOpacityPercent}%`;
   skinOpacity.disabled = !state.skinEnabled;
+  skinControl.classList.toggle("is-disabled", !state.skinEnabled);
 
   viewer.setCrystal(
     crystalClass,

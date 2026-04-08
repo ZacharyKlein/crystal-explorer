@@ -289,6 +289,15 @@ input {
   height: auto;
 }
 
+.skin-control {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .toggle-row,
 .slider-row {
   display: grid;
@@ -301,9 +310,13 @@ input {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.skin-toggle-row,
+.skin-slider-row {
+  background: rgba(255, 255, 255, 0.02);
+}
+
 .slider-row {
   grid-template-columns: 1fr;
-  margin-top: 0.7rem;
 }
 
 .toggle-row strong,
@@ -337,6 +350,24 @@ input {
   text-align: right;
   color: var(--accent-strong);
   font-variant-numeric: tabular-nums;
+}
+
+.skin-control.is-disabled .skin-slider-row {
+  opacity: 0.45;
+}
+
+.skin-control.is-disabled .slider-inputs output,
+.skin-control.is-disabled .skin-slider-row strong,
+.skin-control.is-disabled .skin-slider-row small {
+  color: var(--muted);
+}
+
+.skin-control.is-disabled .slider-inputs {
+  pointer-events: none;
+}
+
+.skin-control input:disabled {
+  cursor: not-allowed;
 }
 
 .empty-state {
