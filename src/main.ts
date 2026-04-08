@@ -25,6 +25,8 @@ const typeDescriptions: Record<SymmetryElementType, string> = {
 const state = {
   selectedId: pointGroups[0].id,
   elementVisibility: new Set<string>(),
+  skinEnabled: false,
+  skinOpacityPercent: 70,
   typeVisibility: {
     rotation: true,
     mirror: true,
@@ -69,6 +71,33 @@ app.innerHTML = `
         </div>
         <div class="control-card">
           <div class="control-block">
+            <p class="eyebrow">Crystal Skin</p>
+            <label class="toggle-row">
+              <input type="checkbox" id="skin-toggle" ${state.skinEnabled ? "checked" : ""} />
+              <span>
+                <strong>Show solid skin layer</strong>
+                <small>Add a translucent surface over the wireframe crystal.</small>
+              </span>
+            </label>
+            <label class="slider-row" for="skin-opacity">
+              <span>
+                <strong>Skin opacity</strong>
+                <small>Adjust the surface opacity from 0% to 100%.</small>
+              </span>
+              <div class="slider-inputs">
+                <input
+                  id="skin-opacity"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value="${state.skinOpacityPercent}"
+                />
+                <output id="skin-opacity-value">${state.skinOpacityPercent}%</output>
+              </div>
+            </label>
+          </div>
+          <div class="control-block">
             <p class="eyebrow">Element Types</p>
             <div id="type-toggles" class="toggle-list"></div>
           </div>
@@ -89,8 +118,22 @@ const classSubtitle = document.querySelector<HTMLParagraphElement>("#class-subti
 const classDescription = document.querySelector<HTMLParagraphElement>("#class-description");
 const typeToggles = document.querySelector<HTMLDivElement>("#type-toggles");
 const elementToggles = document.querySelector<HTMLDivElement>("#element-toggles");
+const skinToggle = document.querySelector<HTMLInputElement>("#skin-toggle");
+const skinOpacity = document.querySelector<HTMLInputElement>("#skin-opacity");
+const skinOpacityValue = document.querySelector<HTMLOutputElement>("#skin-opacity-value");
 
-if (!systemList || !viewerHost || !classTitle || !classSubtitle || !classDescription || !typeToggles || !elementToggles) {
+if (
+  !systemList ||
+  !viewerHost ||
+  !classTitle ||
+  !classSubtitle ||
+  !classDescription ||
+  !typeToggles ||
+  !elementToggles ||
+  !skinToggle ||
+  !skinOpacity ||
+  !skinOpacityValue
+) {
   throw new Error("App layout failed to render");
 }
 
@@ -178,7 +221,16 @@ const renderSelectedClass = () => {
       .join("");
   }
 
-  viewer.setCrystal(crystalClass, visibleElementIdsFor(crystalClass));
+  skinToggle.checked = state.skinEnabled;
+  skinOpacity.value = String(state.skinOpacityPercent);
+  skinOpacityValue.value = `${state.skinOpacityPercent}%`;
+  skinOpacity.disabled = !state.skinEnabled;
+
+  viewer.setCrystal(
+    crystalClass,
+    visibleElementIdsFor(crystalClass),
+    state.skinEnabled ? state.skinOpacityPercent / 100 : 0,
+  );
 };
 
 renderSystemList();
@@ -206,6 +258,16 @@ typeToggles.addEventListener("change", (event) => {
     return;
   }
   state.typeVisibility[type] = input.checked;
+  renderSelectedClass();
+});
+
+skinToggle.addEventListener("change", () => {
+  state.skinEnabled = skinToggle.checked;
+  renderSelectedClass();
+});
+
+skinOpacity.addEventListener("input", () => {
+  state.skinOpacityPercent = Number.parseInt(skinOpacity.value, 10);
   renderSelectedClass();
 });
 

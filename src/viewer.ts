@@ -3,6 +3,7 @@ import {
   Color,
   Float32BufferAttribute,
   Group,
+  MeshLambertMaterial,
   Line,
   LineBasicMaterial,
   LineDashedMaterial,
@@ -15,6 +16,8 @@ import {
   SphereGeometry,
   Vector3,
   WebGLRenderer,
+  AmbientLight,
+  DirectionalLight,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { CrystalClass, SymmetryElement, Vec3, WireframePreset } from "./data";
@@ -44,6 +47,21 @@ const wireframeMaterial = new LineBasicMaterial({
 const baseSegments = (points: number[][], edges: Array<[number, number]>) =>
   edges.map(([start, end]) => [...points[start], ...points[end]]);
 
+interface CrystalShapeData {
+  points: number[][];
+  edges: Array<[number, number]>;
+  faces: number[][];
+}
+
+const triangulate = (faces: number[][]) =>
+  faces.flatMap((face) => {
+    const triangles: number[] = [];
+    for (let index = 1; index < face.length - 1; index += 1) {
+      triangles.push(face[0], face[index], face[index + 1]);
+    }
+    return triangles;
+  });
+
 const prismPoints = (sides: number, radius: number, halfHeight: number) => {
   const top: number[][] = [];
   const bottom: number[][] = [];
@@ -68,7 +86,29 @@ const prismEdges = (sides: number): Array<[number, number]> => {
   return edges;
 };
 
-const createWireframeSegments = (preset: WireframePreset) => {
+const prismFaces = (sides: number) => {
+  const top = Array.from({ length: sides }, (_, index) => index);
+  const bottom = Array.from({ length: sides }, (_, index) => index + sides).reverse();
+  const sidesFaces = Array.from({ length: sides }, (_, index) => {
+    const next = (index + 1) % sides;
+    return [index, next, next + sides, index + sides];
+  });
+  return [top, bottom, ...sidesFaces];
+};
+
+const bipyramidFaces = (ringSize: number, topIndex: number, bottomIndex: number) => [
+  Array.from({ length: ringSize }, (_, index) => index),
+  ...Array.from({ length: ringSize }, (_, index) => {
+    const next = (index + 1) % ringSize;
+    return [index, next, topIndex];
+  }),
+  ...Array.from({ length: ringSize }, (_, index) => {
+    const next = (index + 1) % ringSize;
+    return [next, index, bottomIndex];
+  }),
+];
+
+const createShapeData = (preset: WireframePreset): CrystalShapeData => {
   switch (preset) {
     case "triclinic-cell": {
       const points = [
@@ -81,7 +121,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1.8, 1.5, 1.2],
         [-0.4, 1.2, 1.3],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -94,7 +134,19 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 5],
         [2, 6],
         [3, 7],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 1, 2, 3],
+          [4, 5, 6, 7],
+          [0, 1, 5, 4],
+          [1, 2, 6, 5],
+          [2, 3, 7, 6],
+          [3, 0, 4, 7],
+        ],
+      };
     }
     case "monoclinic-prism": {
       const points = [
@@ -107,7 +159,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [2.1, 0.8, 1.0],
         [-0.4, 0.8, 1.0],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -120,7 +172,19 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 5],
         [2, 6],
         [3, 7],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 1, 2, 3],
+          [4, 5, 6, 7],
+          [0, 1, 5, 4],
+          [1, 2, 6, 5],
+          [2, 3, 7, 6],
+          [3, 0, 4, 7],
+        ],
+      };
     }
     case "orthorhombic-prism": {
       const points = [
@@ -133,7 +197,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1.3, 0.8, 1.0],
         [-1.3, 0.8, 1.0],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -146,7 +210,19 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 5],
         [2, 6],
         [3, 7],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 1, 2, 3],
+          [4, 5, 6, 7],
+          [0, 1, 5, 4],
+          [1, 2, 6, 5],
+          [2, 3, 7, 6],
+          [3, 0, 4, 7],
+        ],
+      };
     }
     case "orthorhombic-dipyramid": {
       const points = [
@@ -157,7 +233,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [0, 0, 1.5],
         [0, 0, -1.5],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -170,7 +246,8 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 5],
         [2, 5],
         [3, 5],
-      ]);
+      ];
+      return { points, edges, faces: bipyramidFaces(4, 4, 5) };
     }
     case "tetragonal-prism": {
       const points = [
@@ -183,7 +260,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 1, 1.3],
         [-1, 1, 1.3],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -196,7 +273,19 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 5],
         [2, 6],
         [3, 7],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 1, 2, 3],
+          [4, 5, 6, 7],
+          [0, 1, 5, 4],
+          [1, 2, 6, 5],
+          [2, 3, 7, 6],
+          [3, 0, 4, 7],
+        ],
+      };
     }
     case "tetragonal-dipyramid": {
       const points = [
@@ -207,7 +296,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [0, 0, 1.7],
         [0, 0, -1.7],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -220,7 +309,8 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 5],
         [2, 5],
         [3, 5],
-      ]);
+      ];
+      return { points, edges, faces: bipyramidFaces(4, 4, 5) };
     }
     case "trigonal-prism": {
       const points = [
@@ -231,7 +321,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [-0.6, 1.04, -1.2],
         [-0.6, -1.04, -1.2],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 0],
@@ -241,7 +331,8 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [0, 3],
         [1, 4],
         [2, 5],
-      ]);
+      ];
+      return { points, edges, faces: prismFaces(3) };
     }
     case "trigonal-rhombohedron": {
       const points = [
@@ -252,7 +343,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [-1.2, 0, -0.65],
         [0.6, -1.04, -0.65],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 0],
@@ -262,11 +353,22 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [0, 3],
         [1, 4],
         [2, 5],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 1, 2],
+          [3, 4, 5],
+          [0, 1, 4, 3],
+          [1, 2, 5, 4],
+          [2, 0, 3, 5],
+        ],
+      };
     }
     case "hexagonal-prism": {
       const points = prismPoints(6, 1.1, 1.25);
-      return baseSegments(points, prismEdges(6));
+      return { points, edges: prismEdges(6), faces: prismFaces(6) };
     }
     case "hexagonal-dipyramid": {
       const ring: number[][] = [];
@@ -275,7 +377,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         ring.push([Math.cos(angle) * 1.15, Math.sin(angle) * 1.15, 0]);
       }
       const points = [...ring, [0, 0, 1.7], [0, 0, -1.7]];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -294,7 +396,8 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [3, 7],
         [4, 7],
         [5, 7],
-      ]);
+      ];
+      return { points, edges, faces: bipyramidFaces(6, 6, 7) };
     }
     case "cube": {
       const points = [
@@ -307,7 +410,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 1, 1],
         [-1, 1, 1],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [1, 2],
         [2, 3],
@@ -320,7 +423,19 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [1, 5],
         [2, 6],
         [3, 7],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 1, 2, 3],
+          [4, 5, 6, 7],
+          [0, 1, 5, 4],
+          [1, 2, 6, 5],
+          [2, 3, 7, 6],
+          [3, 0, 4, 7],
+        ],
+      };
     }
     case "tetrahedron": {
       const points = [
@@ -329,14 +444,24 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [-1.2, 1.2, -1.2],
         [1.2, -1.2, -1.2],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 1],
         [0, 2],
         [0, 3],
         [1, 2],
         [1, 3],
         [2, 3],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 1, 2],
+          [0, 1, 3],
+          [0, 2, 3],
+          [1, 2, 3],
+        ],
+      };
     }
     case "octahedron": {
       const points = [
@@ -347,7 +472,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [0, 0, 1.45],
         [0, 0, -1.45],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 2],
         [0, 3],
         [0, 4],
@@ -360,7 +485,21 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [2, 5],
         [3, 4],
         [3, 5],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 2, 4],
+          [2, 1, 4],
+          [1, 3, 4],
+          [3, 0, 4],
+          [2, 0, 5],
+          [1, 2, 5],
+          [3, 1, 5],
+          [0, 3, 5],
+        ],
+      };
     }
     case "cuboctahedron": {
       const points = [
@@ -377,7 +516,7 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [0, -1, 1],
         [0, -1, -1],
       ];
-      return baseSegments(points, [
+      const edges: Array<[number, number]> = [
         [0, 4],
         [0, 8],
         [0, 5],
@@ -402,9 +541,50 @@ const createWireframeSegments = (preset: WireframePreset) => {
         [6, 10],
         [7, 9],
         [7, 11],
-      ]);
+      ];
+      return {
+        points,
+        edges,
+        faces: [
+          [0, 4, 8],
+          [2, 8, 6],
+          [1, 10, 4],
+          [3, 6, 10],
+          [0, 9, 5],
+          [2, 7, 9],
+          [1, 5, 11],
+          [3, 11, 7],
+          [0, 4, 1, 5],
+          [2, 7, 3, 6],
+          [8, 0, 9, 2],
+          [10, 3, 11, 1],
+          [8, 6, 10, 4],
+          [9, 5, 11, 7],
+        ],
+      };
     }
   }
+};
+
+const createWireframeSegments = (preset: WireframePreset) => {
+  const shape = createShapeData(preset);
+  return baseSegments(shape.points, shape.edges);
+};
+
+const createSkinMesh = (preset: WireframePreset, opacity: number) => {
+  const shape = createShapeData(preset);
+  const positions = shape.points.flat();
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setIndex(triangulate(shape.faces));
+  geometry.computeVertexNormals();
+  const material = new MeshLambertMaterial({
+    color: "#b0d5f3",
+    transparent: true,
+    opacity,
+    depthWrite: opacity > 0.98,
+  });
+  return new Mesh(geometry, material);
 };
 
 const createAxisElement = (element: SymmetryElement) => {
@@ -482,6 +662,13 @@ export class CrystalViewer {
     this.scene = new Scene();
     this.camera = new PerspectiveCamera(42, 1, 0.1, 100);
     this.camera.position.set(4.8, 4.4, 5.4);
+    this.scene.add(new AmbientLight("#ffffff", 1.35));
+    const keyLight = new DirectionalLight("#d7efff", 1.8);
+    keyLight.position.set(4, 5, 6);
+    this.scene.add(keyLight);
+    const fillLight = new DirectionalLight("#ffd8a8", 0.95);
+    fillLight.position.set(-5, -2, 3);
+    this.scene.add(fillLight);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
@@ -498,8 +685,13 @@ export class CrystalViewer {
     this.animate();
   }
 
-  setCrystal(crystalClass: CrystalClass, visibleIds: Set<string>) {
+  setCrystal(crystalClass: CrystalClass, visibleIds: Set<string>, skinOpacity = 0) {
     this.root.clear();
+
+    if (skinOpacity > 0) {
+      const skin = createSkinMesh(crystalClass.wireframePreset, skinOpacity);
+      this.root.add(skin);
+    }
 
     const wireframe = new LineSegments(
       buildLineGeometry(createWireframeSegments(crystalClass.wireframePreset)),

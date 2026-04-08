@@ -274,7 +274,8 @@ input {
   gap: 0.7rem;
 }
 
-.toggle-row {
+.toggle-row,
+.slider-row {
   display: grid;
   grid-template-columns: 20px 1fr;
   gap: 0.8rem;
@@ -285,7 +286,13 @@ input {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.slider-row {
+  grid-template-columns: 1fr;
+  margin-top: 0.7rem;
+}
+
 .toggle-row strong,
+.slider-row strong,
 .viewer-card h3,
 .hero-note h3 {
   display: block;
@@ -295,6 +302,26 @@ input {
 .toggle-row input {
   margin-top: 0.25rem;
   accent-color: var(--accent);
+}
+
+.slider-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 0.7rem;
+}
+
+.slider-inputs input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.slider-inputs output {
+  min-width: 3.2rem;
+  text-align: right;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
 }
 
 .empty-state {
